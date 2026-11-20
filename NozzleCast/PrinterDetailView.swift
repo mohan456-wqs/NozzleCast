@@ -96,33 +96,7 @@ struct PrinterDetailContent: View {
 
     var body: some View {
         Group {
-            // `ArrangementView`'s `.split` style engages based on aspect ratio alone (it splits
-            // vertically whenever the available space is taller than wide) — not on whether a
-            // hinge is actually present. Almost every phone screen in portrait is taller than
-            // wide, so gating on that alone would pin the video into its own fixed top pane on
-            // every pose, not just a genuinely half-open Duo laid flat. Checking for an active
-            // `.division` reserved region — the region the hinge itself carves out — is what
-            // actually distinguishes "hinge splitting the screen right now" from "just a tall
-            // window", and is the only case where we want the video pinned above a separately
-            // scrolling controls pane instead of everything scrolling together as one column.
-            if #available(iOS 27.1, *) {
-                GeometryReader { proxy in
-                    if proxy.reservedRegions(kind: .division).isEmpty {
-                        plainScrollingContent
-                    } else {
-                        ArrangementView {
-                            PrinterVideoHeader(printerID: printer.id, state: printer.state, jobFileName: printer.jobFileName, isCameraLive: $isCameraLive, showLiveStream: $showLiveStream, onBack: onBack, backIcon: backIcon, fillsAvailableHeight: true)
-                        } secondary: {
-                            ScrollView {
-                                controlsAndInfo
-                            }
-                        }
-                        .arrangementViewStyle(.split.axes(.vertical))
-                    }
-                }
-            } else {
-                plainScrollingContent
-            }
+            plainScrollingContent
         }
         .background(NCColor.canvasBackground.ignoresSafeArea())
         .navigationBarHidden(true)
